@@ -8,6 +8,7 @@ module "ofmi_2024_group" {
     "Focil",
     "InesLlergo",
     "Janque",
+    "Josetapia",
     "Juan_Carlos_Sigler_Priego",
     "Yosshua",
     "alo_54",
