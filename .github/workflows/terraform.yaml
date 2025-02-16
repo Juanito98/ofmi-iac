@@ -25,7 +25,7 @@ env:
 
 jobs:
   terraform:
-    name: "Terraform Infrastructure Change Management"
+    name: "terraform"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
