@@ -1,4 +1,4 @@
-name: "Terraform Infrastructure Change Management Pipeline with GitHub Actions"
+name: terraform
 
 on:
   push:
@@ -20,6 +20,8 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   # S3 bucket for the Terraform state
   BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
+  # Credentials for omegaUp provider
+  OMEGAUP_API_TOKEN: ${{ secrets.OMEGAUP_API_TOKEN }}
 
 jobs:
   terraform:
