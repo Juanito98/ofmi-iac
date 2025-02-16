@@ -112,6 +112,7 @@ jobs:
 
             </details>
             *Pushed by: @${{ github.actor }}, Action: `${{ github.event_name }}`*
+          edit-mode: replace
 
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure' && steps.changed.outputs.tfworkspacedeps == 'true'
