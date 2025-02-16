@@ -41,35 +41,49 @@ jobs:
       - name: Checkout the repository to the runner
         uses: actions/checkout@v2
 
+      - name: Check for Terraform changes
+        id: changed
+        uses: dorny/paths-filter@v3.0.2
+        with:
+          filters: |
+            - tfworkspacedeps:
+              - ${{matrix.tfworkingdir}}
+              - "terraform/modules/**"
+              - ".github/workflows/**"
+
       - name: Setup Terraform with specified version on the runner
+        if: steps.changed.outputs.tfworkspacedeps == 'true'
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{matrix.tfversion}}
 
       - name: Terraform init
         id: init
+        if: steps.changed.outputs.tfworkspacedeps == 'true'
         run: terraform init
         working-directory: ${{matrix.tfworkingdir}}
 
       - name: Terraform format
         id: fmt
+        if: steps.changed.outputs.tfworkspacedeps == 'true'
         run: terraform fmt -check
         working-directory: ${{matrix.tfworkingdir}}
 
       - name: Terraform validate
         id: validate
+        if: steps.changed.outputs.tfworkspacedeps == 'true'
         run: terraform validate
         working-directory: ${{matrix.tfworkingdir}}
 
       - name: Terraform plan
         id: plan
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.changed.outputs.tfworkspacedeps == 'true'
         run: terraform plan -no-color -input=false
         continue-on-error: true
         working-directory: ${{matrix.tfworkingdir}}
 
       - uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.changed.outputs.tfworkspacedeps == 'true'
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
         with:
@@ -96,10 +110,10 @@ jobs:
             })
 
       - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
+        if: steps.plan.outcome == 'failure' && steps.changed.outputs.tfworkspacedeps == 'true'
         run: exit 1
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.changed.outputs.tfworkspacedeps == 'true'
         run: terraform apply -auto-approve -input=false
         working-directory: ${{matrix.tfworkingdir}}
