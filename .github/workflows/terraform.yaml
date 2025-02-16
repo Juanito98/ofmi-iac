@@ -46,7 +46,7 @@ jobs:
         uses: dorny/paths-filter@v3.0.2
         with:
           filters: |
-            - tfworkspacedeps:
+            tfworkspacedeps:
               - '${{matrix.tfworkingdir}}/**'
               - 'terraform/modules/**'
               - '.github/workflows/**'
@@ -94,26 +94,25 @@ jobs:
       - name: GitHub tf plan comment
         uses: peter-evans/create-or-update-comment@v4.0.0
         if: github.event_name == 'pull_request' && steps.changed.outputs.tfworkspacedeps == 'true'
-        env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             ### Terraform workspace: ${{matrix.tfworkspace}}
-            #### Terraform Format and Style 🖌`${{ steps.fmt.outcome }}`
-            #### Terraform Initialization ⚙️`${{ steps.init.outcome }}`
-            #### Terraform Validation 🤖`${{ steps.validate.outcome }}`
-            #### Terraform Plan 📖`${{ steps.plan.outcome }}`
+            #### Terraform Format and Style 🖌 `${{ steps.fmt.outcome }}`
+            #### Terraform Initialization ⚙️ `${{ steps.init.outcome }}`
+            #### Terraform Validation 🤖 `${{ steps.validate.outcome }}`
+            #### Terraform Plan 📖 `${{ steps.plan.outcome }}`
 
             <details><summary>Show Plan</summary>
 
-            \`\`\`\n
-            ${process.env.PLAN}
-            \`\`\`
+            ```terraform
+            ${{ steps.plan.outputs.stdout }}
+            ```
 
             </details>
             *Pushed by: @${{ github.actor }}, Action: `${{ github.event_name }}`*
+          edit-mode: replace
 
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure' && steps.changed.outputs.tfworkspacedeps == 'true'
