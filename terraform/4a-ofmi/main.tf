@@ -1,8 +1,10 @@
-module "ofmi_2024_group" {
-  source      = "../modules/group"
+resource "omegaup_group" "ofmi_2024" {
   alias       = "ofmi-2024"
   description = "Grupo admin de los problemas de la 4a OFMI"
-  members = toset([
+}
+
+resource "omegaup_group_member" "ofmi_2024_members" {
+  for_each = toset([
     "Angeltapia",
     "EfrenGonzalez",
     "Focil",
@@ -22,4 +24,7 @@ module "ofmi_2024_group" {
     "ofmi",
     "omibc"
   ])
+
+  group_alias = omegaup_group.ofmi_2024.alias
+  username    = each.value
 }
