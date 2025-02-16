@@ -1,0 +1,125 @@
+name: terraform
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - terraform/**
+  pull_request:
+    branches:
+      - main
+    paths:
+      - terraform/**
+
+env:
+  # verbosity setting for Terraform logs
+  TF_LOG: INFO
+  # Credentials for deployment to AWS
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  # S3 bucket for the Terraform state
+  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
+  # Credentials for omegaUp provider
+  OMEGAUP_API_TOKEN: ${{ secrets.OMEGAUP_API_TOKEN }}
+
+jobs:
+  terraform:
+    name: "terraform"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tfworkspace:
+          - "4a-ofmi"
+        include:
+          - tfworkspace: "4a-ofmi"
+            tfworkingdir: "terraform/4a-ofmi"
+            tfversion: 1.10.5
+
+    steps:
+      - name: Checkout the repository to the runner
+        uses: actions/checkout@v2
+
+      - name: Check for Terraform changes
+        id: changed
+        uses: dorny/paths-filter@v3.0.2
+        with:
+          filters: |
+            - tfworkspacedeps:
+              - '${{matrix.tfworkingdir}}/**'
+              - 'terraform/modules/**'
+              - '.github/workflows/**'
+
+      - name: Setup Terraform with specified version on the runner
+        if: steps.changed.outputs.tfworkspacedeps == 'true'
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{matrix.tfversion}}
+
+      - name: Terraform init
+        id: init
+        if: steps.changed.outputs.tfworkspacedeps == 'true'
+        run: terraform init
+        working-directory: ${{matrix.tfworkingdir}}
+
+      - name: Terraform format
+        id: fmt
+        if: steps.changed.outputs.tfworkspacedeps == 'true'
+        run: terraform fmt -check
+        working-directory: ${{matrix.tfworkingdir}}
+
+      - name: Terraform validate
+        id: validate
+        if: steps.changed.outputs.tfworkspacedeps == 'true'
+        run: terraform validate
+        working-directory: ${{matrix.tfworkingdir}}
+
+      - name: Terraform plan
+        id: plan
+        if: github.event_name == 'pull_request' && steps.changed.outputs.tfworkspacedeps == 'true'
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+        working-directory: ${{matrix.tfworkingdir}}
+
+      - name: Find Comment
+        if: github.event_name == 'pull_request' && steps.changed.outputs.tfworkspacedeps == 'true'
+        uses: peter-evans/find-comment@v3
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "Terraform workspace: ${{matrix.tfworkspace}}"
+
+      - name: GitHub tf plan comment
+        uses: peter-evans/create-or-update-comment@v4.0.0
+        if: github.event_name == 'pull_request' && steps.changed.outputs.tfworkspacedeps == 'true'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### Terraform workspace: ${{matrix.tfworkspace}}
+            #### Terraform Format and Style 🖌`${{ steps.fmt.outcome }}`
+            #### Terraform Initialization ⚙️`${{ steps.init.outcome }}`
+            #### Terraform Validation 🤖`${{ steps.validate.outcome }}`
+            #### Terraform Plan 📖`${{ steps.plan.outcome }}`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+            *Pushed by: @${{ github.actor }}, Action: `${{ github.event_name }}`*
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure' && steps.changed.outputs.tfworkspacedeps == 'true'
+        run: exit 1
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.changed.outputs.tfworkspacedeps == 'true'
+        run: terraform apply -auto-approve -input=false
+        working-directory: ${{matrix.tfworkingdir}}
