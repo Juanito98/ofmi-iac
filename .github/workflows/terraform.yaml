@@ -99,10 +99,10 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             ### Terraform workspace: ${{matrix.tfworkspace}}
-            #### Terraform Format and Style 🖌`${{ steps.fmt.outcome }}`
-            #### Terraform Initialization ⚙️`${{ steps.init.outcome }}`
-            #### Terraform Validation 🤖`${{ steps.validate.outcome }}`
-            #### Terraform Plan 📖`${{ steps.plan.outcome }}`
+            #### Terraform Format and Style 🖌 `${{ steps.fmt.outcome }}`
+            #### Terraform Initialization ⚙️ `${{ steps.init.outcome }}`
+            #### Terraform Validation 🤖 `${{ steps.validate.outcome }}`
+            #### Terraform Plan 📖 `${{ steps.plan.outcome }}`
 
             <details><summary>Show Plan</summary>
 
