@@ -35,9 +35,6 @@ jobs:
           - "global"
           - "4a-ofmi"
         include:
-          - tfworkspace: "bootstrap"
-            tfworkingdir: "terraform/bootstrap"
-            tfversion: 1.10.5
           - tfworkspace: "global"
             tfworkingdir: "terraform/global"
             tfversion: 1.10.5
