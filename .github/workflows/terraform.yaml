@@ -60,6 +60,7 @@ jobs:
               - '.github/workflows/**'
 
       - name: Authenticate to Google Cloud
+        if: steps.changed.outputs.tfworkspacedeps == 'true'
         id: auth
         uses: google-github-actions/auth@v2
         with:
