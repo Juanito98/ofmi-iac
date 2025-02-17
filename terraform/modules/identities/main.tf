@@ -10,7 +10,8 @@ resource "random_password" "passwords" {
     seed = var.seed
   }
 
-  length = 16
+  length  = 12
+  special = false
 }
 
 resource "google_storage_bucket_object" "gcs_identities" {

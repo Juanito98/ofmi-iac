@@ -36,4 +36,5 @@ module "contest_identities" {
   identities_csv      = file("files/identities.csv")
   gcs_bucket          = google_storage_bucket.gcs_bucket.name
   gcs_output_filename = "identities.csv"
+  seed                = var._4a_ofmi_passwords_seed
 }
