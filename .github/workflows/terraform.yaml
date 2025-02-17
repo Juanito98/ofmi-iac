@@ -45,6 +45,11 @@ jobs:
             tfworkingdir: "terraform/4a-ofmi"
             tfversion: 1.10.5
 
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: "read"
+      id-token: "write"
+
     steps:
       - name: Checkout the repository to the runner
         uses: actions/checkout@v2
