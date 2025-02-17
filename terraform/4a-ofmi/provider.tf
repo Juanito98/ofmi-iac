@@ -8,10 +8,6 @@ terraform {
       source  = "Juanito98/omegaup"
       version = "0.0.2"
     }
-    random = {
-      source  = "hashicorp/random"
-      version = "3.6.3"
-    }
   }
   backend "gcs" {
     bucket = "ofmi-iac"
@@ -22,4 +18,3 @@ terraform {
 
 provider "google" {}
 
-provider "random" {}
