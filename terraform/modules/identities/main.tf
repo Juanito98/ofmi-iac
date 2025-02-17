@@ -10,8 +10,8 @@ resource "random_password" "passwords" {
     seed = var.seed
   }
 
-  length  = 12
-  special = false
+  length           = 12
+  override_special = "@#-!"
 }
 
 resource "google_storage_bucket_object" "gcs_identities" {
@@ -21,4 +21,5 @@ resource "google_storage_bucket_object" "gcs_identities" {
     ["username,password"], # CSV Header
     [for identity in local.identities_csv : "${identity.username},${random_password.passwords[identity.username].result}"]
   ))
+  depends_on = [random_password.passwords]
 }
