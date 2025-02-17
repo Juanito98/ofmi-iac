@@ -31,7 +31,6 @@ jobs:
       fail-fast: false
       matrix:
         tfworkspace:
-          - "bootstrap"
           - "global"
           - "4a-ofmi"
         include:
@@ -43,9 +42,7 @@ jobs:
             tfversion: 1.10.5
 
     # Add "id-token" with the intended permissions.
-    permissions:
-      contents: "read"
-      id-token: "write"
+    permissions: write-all
 
     steps:
       - name: Checkout the repository to the runner
