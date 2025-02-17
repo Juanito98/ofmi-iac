@@ -28,3 +28,12 @@ resource "omegaup_group_member" "ofmi_2024_members" {
   group_alias = omegaup_group.ofmi_2024.alias
   username    = each.value
 }
+
+# Identities
+module "contest_identities" {
+  source = "../modules/identities"
+
+  identities_csv      = file("files/identities.csv")
+  gcs_bucket          = google_storage_bucket.gcs_bucket.name
+  gcs_output_filename = "identities.csv"
+}

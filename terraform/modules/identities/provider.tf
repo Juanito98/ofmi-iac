@@ -13,13 +13,4 @@ terraform {
       version = "3.6.3"
     }
   }
-  backend "gcs" {
-    bucket = "ofmi-iac"
-    prefix = "terraform/4a-ofmi"
-  }
-
 }
-
-provider "google" {}
-
-provider "random" {}

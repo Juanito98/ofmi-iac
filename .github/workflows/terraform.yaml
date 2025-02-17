@@ -31,11 +31,18 @@ jobs:
       fail-fast: false
       matrix:
         tfworkspace:
+          - "global"
           - "4a-ofmi"
         include:
+          - tfworkspace: "global"
+            tfworkingdir: "terraform/global"
+            tfversion: 1.10.5
           - tfworkspace: "4a-ofmi"
             tfworkingdir: "terraform/4a-ofmi"
             tfversion: 1.10.5
+
+    # Add "id-token" with the intended permissions.
+    permissions: write-all
 
     steps:
       - name: Checkout the repository to the runner
@@ -50,6 +57,18 @@ jobs:
               - '${{matrix.tfworkingdir}}/**'
               - 'terraform/modules/**'
               - '.github/workflows/**'
+
+      - name: Authenticate to Google Cloud
+        if: steps.changed.outputs.tfworkspacedeps == 'true'
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ secrets.GCP_SERVICE_ACCOUNT }}"
+
+      - name: Set up Cloud SDK
+        if: steps.changed.outputs.tfworkspacedeps == 'true'
+        uses: google-github-actions/setup-gcloud@v2
 
       - name: Setup Terraform with specified version on the runner
         if: steps.changed.outputs.tfworkspacedeps == 'true'

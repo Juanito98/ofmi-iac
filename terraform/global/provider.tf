@@ -8,8 +8,10 @@ terraform {
 
   backend "gcs" {
     bucket = "ofmi-iac"
-    prefix = "terraform/bootstrap"
+    prefix = "terraform/global"
   }
 }
 
-provider "google" {}
+provider "google" {
+  project = var.gcp_project
+}
