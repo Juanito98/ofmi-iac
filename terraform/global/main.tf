@@ -14,6 +14,16 @@ resource "google_service_account" "ofmi_iac_sa" {
   account_id = "ofmi-iac"
 }
 
+# Give enough permissions 
+resource "google_project_iam_member" "ofmi_iac_sa_permission" {
+  for_each = toset(["roles/editor", "roles/storage.admin", "roles/resourcemanager.projectIamAdmin"])
+
+  project = var.gcp_project
+  member  = "serviceAccount:${google_service_account.ofmi_iac_sa.email}"
+  role    = each.key
+
+}
+
 # Using workload identity pool to allow GitHub actions authenticate to google provider
 resource "google_iam_workload_identity_pool" "workload_identity_pool" {
   workload_identity_pool_id = "pool"
