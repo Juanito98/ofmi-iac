@@ -33,7 +33,9 @@ resource "omegaup_group_member" "ofmi_2024_members" {
 module "contest_identities" {
   source = "../modules/identities"
 
-  identities_csv      = file("files/identities.csv")
+  group_alias    = omegaup_group.ofmi_2024.alias
+  identities_csv = file(var._4a_ofmi_identities_filepath)
+
   gcs_bucket          = google_storage_bucket.gcs_bucket.name
   gcs_output_filename = "identities.csv"
   seed                = var._4a_ofmi_passwords_seed

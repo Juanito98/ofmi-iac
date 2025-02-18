@@ -1,3 +1,9 @@
+variable "group_alias" {
+  type        = string
+  description = "OmegaUp group alias use to create the identities."
+}
+
+
 variable "identities_csv" {
   type        = string
   description = "File content of the identities csv without passwords."
