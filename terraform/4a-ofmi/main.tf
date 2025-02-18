@@ -30,7 +30,7 @@ resource "omegaup_group_member" "ofmi_2024_members" {
 }
 
 # Identities
-module "contest_identities" {
+module "ofmi_2024_identities" {
   source = "../modules/identities"
 
   group_alias    = omegaup_group.ofmi_2024.alias
