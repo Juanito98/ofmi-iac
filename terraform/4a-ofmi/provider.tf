@@ -16,5 +16,10 @@ terraform {
 
 }
 
-provider "google" {}
+provider "google" {
+  project = var.gcp_project
+}
 
+provider "omegaup" {
+  api_token = data.google_secret_manager_secret_version.omegaup_api_key.secret_data
+}
