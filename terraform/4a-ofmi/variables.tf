@@ -12,3 +12,8 @@ variable "_4a_ofmi_passwords_seed" {
   type    = string
   default = "seed"
 }
+
+variable "_4a_ofmi_identities_filepath" {
+  type    = string
+  default = "files/identities.csv"
+}
