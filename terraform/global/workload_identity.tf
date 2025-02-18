@@ -9,7 +9,12 @@ resource "google_service_account" "ofmi_iac_sa" {
 
 # Give enough permissions 
 resource "google_project_iam_member" "ofmi_iac_sa_permission" {
-  for_each = toset(["roles/editor", "roles/storage.admin", "roles/resourcemanager.projectIamAdmin"])
+  for_each = toset([
+    "roles/editor",
+    "roles/storage.admin",
+    "roles/resourcemanager.projectIamAdmin",
+    "roles/secretmanager.admin",
+  ])
 
   project = var.gcp_project
   member  = "serviceAccount:${google_service_account.ofmi_iac_sa.email}"
