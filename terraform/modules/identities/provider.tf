@@ -6,7 +6,7 @@ terraform {
     }
     omegaup = {
       source  = "Juanito98/omegaup"
-      version = ">= 0.0.3"
+      version = ">= 0.0.4"
     }
     random = {
       source  = "hashicorp/random"
