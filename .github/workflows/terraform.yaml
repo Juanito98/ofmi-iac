@@ -4,13 +4,9 @@ on:
   push:
     branches:
       - main
-    paths:
-      - terraform/**
   pull_request:
     branches:
       - main
-    paths:
-      - terraform/**
 
 env:
   # verbosity setting for Terraform logs
@@ -58,29 +54,6 @@ jobs:
               - 'terraform/modules/**'
               - '.github/workflows/**'
 
-      - name: Find Comment
-        if: github.event_name == 'pull_request' && steps.changed.outputs.tfworkspacedeps == 'true'
-        uses: peter-evans/find-comment@v3
-        id: fc
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: "github-actions[bot]"
-          body-includes: "Terraform workspace: ${{matrix.tfworkspace}}"
-
-      - name: GitHub tf pending comment
-        uses: peter-evans/create-or-update-comment@v4.0.0
-        if: github.event_name == 'pull_request' && steps.changed.outputs.tfworkspacedeps == 'true'
-        with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ### Terraform workspace: ${{matrix.tfworkspace}}
-
-            Running github action...
-
-            *Pushed by: @${{ github.actor }}, Action: `${{ github.event_name }}`*
-          edit-mode: replace
-
       - name: Authenticate to Google Cloud
         if: steps.changed.outputs.tfworkspacedeps == 'true'
         id: auth
@@ -123,6 +96,15 @@ jobs:
         run: terraform plan -no-color -input=false
         continue-on-error: true
         working-directory: ${{matrix.tfworkingdir}}
+
+      - name: Find Comment
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && steps.changed.outputs.tfworkspacedeps == 'true'
+        uses: peter-evans/find-comment@v3
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "Terraform workspace: ${{matrix.tfworkspace}}"
 
       - name: GitHub tf plan comment
         uses: peter-evans/create-or-update-comment@v4.0.0

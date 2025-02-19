@@ -7,6 +7,7 @@ resource "omegaup_group_member" "ofmi_2024_members" {
   for_each = toset([
     "Angeltapia",
     "EfrenGonzalez",
+    "FernandoMauro",
     "Focil",
     "InesLlergo",
     "Janque",
@@ -22,8 +23,7 @@ resource "omegaup_group_member" "ofmi_2024_members" {
     "lorena_10",
     "nbreakable",
     "ofmi",
-    "omibc",
-    "fernandomauro"
+    "omibc"
   ])
 
   group_alias = omegaup_group.ofmi_2024.alias
