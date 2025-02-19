@@ -6,11 +6,13 @@ on:
       - main
     paths:
       - terraform/**
+      - ./github/workflows/terraform.yaml
   pull_request:
     branches:
       - main
     paths:
       - terraform/**
+      - ./github/workflows/terraform.yaml
 
 env:
   # verbosity setting for Terraform logs
@@ -59,7 +61,7 @@ jobs:
               - '.github/workflows/**'
 
       - name: Find Comment
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && steps.changed.outputs.tfworkspacedeps == 'true'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository && steps.changed.outputs.tfworkspacedeps == 'true'
         uses: peter-evans/find-comment@v3
         id: fc
         with:
@@ -69,7 +71,7 @@ jobs:
 
       - name: GitHub tf pending comment
         uses: peter-evans/create-or-update-comment@v4.0.0
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && steps.changed.outputs.tfworkspacedeps == 'true'
+        if: github.event_name == 'pull_request' && steps.changed.outputs.tfworkspacedeps == 'true'
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -126,7 +128,7 @@ jobs:
 
       - name: GitHub tf plan comment
         uses: peter-evans/create-or-update-comment@v4.0.0
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && steps.changed.outputs.tfworkspacedeps == 'true'
+        if: github.event_name == 'pull_request' && steps.changed.outputs.tfworkspacedeps == 'true'
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
