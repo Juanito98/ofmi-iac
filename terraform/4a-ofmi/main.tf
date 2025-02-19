@@ -22,7 +22,8 @@ resource "omegaup_group_member" "ofmi_2024_members" {
     "lorena_10",
     "nbreakable",
     "ofmi",
-    "omibc"
+    "omibc",
+    "fernandomauro"
   ])
 
   group_alias = omegaup_group.ofmi_2024.alias
