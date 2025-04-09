@@ -72,10 +72,9 @@ def generateIdentityFile(file: TextIO, generate_extended_file: bool) -> None:
         if state_id not in username_generator:
             username_generator[state_id] = 0
         username_generator[state_id] += 1
-        username = f"{state_id}{username_generator[state_id]}"
 
         return {
-            "username": username,
+            "username": str(username_generator[state_id]),
             "name": row[_NOMBRE_COMPLETO],
             "country_id": "MX",
             "state_id": state_id,
@@ -84,6 +83,12 @@ def generateIdentityFile(file: TextIO, generate_extended_file: bool) -> None:
         }
 
     output_rows = list(map(to_identity, rows))
+    # Fix the username to be unique
+    zfill = len(str(max(username_generator.values())))
+    output_rows = [
+        {**row, "username": f"{row['state_id']}-{row['username'].zfill(zfill)}"}
+        for row in output_rows
+    ]
     assert len(output_rows) > 0, "No rows found in the input file."
     assert len(output_rows) == len(list(rows)), len(list(rows))
 
