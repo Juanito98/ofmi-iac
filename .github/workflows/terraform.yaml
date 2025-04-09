@@ -30,12 +30,11 @@ jobs:
           - "global"
           - "4a-ofmi"
         include:
+          - tfversion: 1.10.5
           - tfworkspace: "global"
             tfworkingdir: "terraform/global"
-            tfversion: 1.10.5
           - tfworkspace: "4a-ofmi"
             tfworkingdir: "terraform/4a-ofmi"
-            tfversion: 1.10.5
 
     # Add "id-token" with the intended permissions.
     permissions: write-all
