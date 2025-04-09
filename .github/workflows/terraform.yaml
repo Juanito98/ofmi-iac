@@ -26,6 +26,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        tfworkspace:
+          - "global"
+          - "4a-ofmi"
         include:
           - tfversion: 1.10.5
           - tfworkspace: "global"
