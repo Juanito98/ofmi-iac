@@ -37,6 +37,5 @@ resource "google_storage_bucket_object" "gcs_identities" {
     ["username,full_username,password"], # CSV Header
     [for identity in local.identities_csv : "${identity.username},${var.group_alias}:${identity.username},${random_password.passwords[identity.username].result}"]
   ))
-  content_type = "text/plain; charset=utf-8"
-  depends_on   = [omegaup_identities.identities]
+  depends_on = [omegaup_identities.identities]
 }
