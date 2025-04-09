@@ -34,8 +34,9 @@ resource "google_storage_bucket_object" "gcs_identities" {
   bucket = var.gcs_bucket
   name   = var.gcs_output_filename
   content = join("\n", concat(
-    ["username,password"], # CSV Header
-    [for identity in local.identities_csv : "${identity.username},${random_password.passwords[identity.username].result}"]
+    ["username,full_username,password"], # CSV Header
+    [for identity in local.identities_csv : "${identity.username},${var.group_alias}:${identity.username},${random_password.passwords[identity.username].result}"]
   ))
-  depends_on = [omegaup_identities.identities]
+  content_type = "text/plain; charset=utf-8"
+  depends_on   = [omegaup_identities.identities]
 }
