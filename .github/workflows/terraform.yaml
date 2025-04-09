@@ -136,3 +136,17 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.changed.outputs.tfworkspacedeps == 'true'
         run: terraform apply -auto-approve -input=false
         working-directory: ${{matrix.tfworkingdir}}
+
+  results:
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    name: Final Results
+    needs: [terraform]
+    steps:
+      - run: |
+          result="${{ needs.terraform.result }}"
+          if [[ $result == "success" || $result == "skipped" ]]; then
+            exit 0
+          else
+            exit 1
+          fi
