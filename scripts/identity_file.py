@@ -42,14 +42,18 @@ _mexico_state_ids = {
 }
 
 
-def generateIdentityFile(file: TextIO) -> None:
+def generateIdentityFile(file: TextIO, generate_extended_file: bool) -> None:
     """
     Generate the identity file from the given file.
     """
     if not file.name.endswith(".in"):
-        logging.warning("It is recommended to use a .in file instead.")
+        logging.warning(
+            "It is recommended to use a .in file instead.\n"
+            + "REMEMBER NOT TO COMMIT PERSONAL DATA."
+        )
 
     reader = csv.DictReader(file)
+    rows = list(reader)
 
     username_generator = {}
 
@@ -79,16 +83,30 @@ def generateIdentityFile(file: TextIO) -> None:
             "school_name": "OFMI",
         }
 
-    output_rows = list(map(to_identity, reader))
+    output_rows = list(map(to_identity, rows))
     assert len(output_rows) > 0, "No rows found in the input file."
+    assert len(output_rows) == len(list(rows)), len(list(rows))
 
     # Remove extension and add .out.csv
+    extended_file = file.name.rsplit(".", 1)[0] + ".generated.in"
     output_file = file.name.rsplit(".", 1)[0] + ".generated.csv"
 
     with open(output_file, "w") as csv_out:
         writer = csv.DictWriter(csv_out, fieldnames=output_rows[0].keys())
         writer.writeheader()
         writer.writerows(output_rows)
+
+    if generate_extended_file:
+        with open(extended_file, "w") as csv_out:
+            writer = csv.DictWriter(
+                csv_out,
+                fieldnames=["username", "state_id"] + list(reader.fieldnames or []),
+            )
+            writer.writeheader()
+            for row, output_row in zip(rows, output_rows):
+                row["username"] = output_row["username"]
+                row["state_id"] = output_row["state_id"]
+                writer.writerow(row)
 
 
 def _main() -> None:
@@ -98,6 +116,12 @@ def _main() -> None:
         "--verbose",
         action="store_true",
         help="Enable verbose output.",
+    )
+    parser.add_argument(
+        "-e",
+        "--extended",
+        action="store_true",
+        help="Generate the extended file.",
     )
     parser.add_argument(
         "file",
@@ -113,7 +137,7 @@ def _main() -> None:
     )
     logging.getLogger("urllib3").setLevel(logging.CRITICAL)
 
-    generateIdentityFile(args.file)
+    generateIdentityFile(args.file, args.extended)
     args.file.close()
 
 
