@@ -10,8 +10,8 @@ resource "random_password" "passwords" {
     seed = var.seed
   }
 
-  length           = 12
-  override_special = "@#-!"
+  length  = 12
+  special = false
 }
 
 resource "omegaup_identities" "identities" {
