@@ -43,6 +43,6 @@ module "ofmi_2024_identities" {
   gcs_output_filename = "identities.csv"
   seed                = var._4a_ofmi_passwords_seed
   providers = {
-    "omegaup" = omegaup.omegaup_juanito
+    omegaup = omegaup.omegaup_juanito
   }
 }
