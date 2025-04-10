@@ -9,5 +9,5 @@ resource "google_storage_bucket" "gcs_bucket" {
 resource "google_storage_bucket_iam_member" "gcs_bucket_viewers" {
   bucket = google_storage_bucket.gcs_bucket.name
   role   = "roles/storage.objectViewer"
-  member = "group:4aofmi@omegaup.com"
+  member = "group:ofmi-core@omegaup.com"
 }
