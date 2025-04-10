@@ -46,3 +46,22 @@ module "ofmi_2024_identities" {
     omegaup = omegaup.omegaup_juanito
   }
 }
+
+# Identidades del Selectivo 1
+
+resource "omegaup_group" "selectivo_1" {
+  alias       = "4AOFMISEL1"
+  name        = "4a OFMI Selectivo 1"
+  description = "Preselectivo de la 4a OFMI"
+}
+
+module "selectivo_1_identities" {
+  source = "../modules/identities"
+
+  group_alias    = omegaup_group.selectivo_1.alias
+  identities_csv = file("files/identities_selectivo.generated.csv")
+
+  gcs_bucket          = google_storage_bucket.gcs_bucket.name
+  gcs_output_filename = "identities_selectivo.csv"
+  seed                = var._4a_ofmi_passwords_seed
+}
