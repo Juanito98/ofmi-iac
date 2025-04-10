@@ -21,5 +21,11 @@ provider "google" {
 }
 
 provider "omegaup" {
+  alias     = "omegaup_juanito"
+  api_token = data.google_secret_manager_secret_version.omegaup_api_key_juanito.secret_data
+}
+
+
+provider "omegaup" {
   api_token = data.google_secret_manager_secret_version.omegaup_api_key.secret_data
 }
