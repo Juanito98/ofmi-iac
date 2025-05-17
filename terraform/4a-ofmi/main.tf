@@ -14,6 +14,7 @@ resource "omegaup_group_member" "ofmi_2024_members" {
     "Janque",
     "Josetapia",
     "Juan_Carlos_Sigler_Priego",
+    "SJMA_11723",
     "Yosshua",
     "alo_54",
     "andreasantillana",
